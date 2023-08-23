@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User
+from .models import User,Recipe
 from django.utils.translation import gettext_lazy as _
 
 
@@ -11,9 +11,9 @@ class UserAdmin(BaseUserAdmin):
     ordering = ['id']
     list_display = ['email', 'name']
     fieldsets = (
-        (None,
+        (_('Personal Details'),
          {
-             'fields': ('email', 'password'),
+             'fields': ('name', 'email', 'password'),
          }
          ),
         (
@@ -47,3 +47,4 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(User, UserAdmin)
+admin.site.register(Recipe)

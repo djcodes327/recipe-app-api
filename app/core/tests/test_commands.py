@@ -10,10 +10,16 @@ from django.db.utils import OperationalError
 from django.test import SimpleTestCase
 
 
+# we mock db behaviour using @patch. we do this for all test methods by
+# decorating the class with patch. We provide patch with the path to the
+# command we are going to be mocking. We use the Command.check method that
+# wait_for_db has inherited from the BaseCommand class. We mock that 'check'
+# method to simulate the response.
 @patch('core.management.commands.wait_for_db.Command.check')
 class CommandTests(SimpleTestCase):
     """Test Commands"""
 
+    # the patched_check object will be passed in as a param to this function
     def test_wait_for_db_ready(self, patched_check):
         """Test Wait for Database if Database is ready"""
         patched_check.return_value = True

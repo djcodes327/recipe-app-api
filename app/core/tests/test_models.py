@@ -1,8 +1,12 @@
 """
 Test for Models
 """
+from decimal import Decimal
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+
+# Get models
+from core import models
 
 
 class ModelTest(TestCase):
@@ -50,3 +54,19 @@ class ModelTest(TestCase):
 
         self.assertEqual(user.is_superuser, True)
         self.assertEqual(user.is_staff, True)
+
+    def test_create_recipe(self):
+        """Test Creating a recipe."""
+        user = get_user_model().objects.create_user(
+            'test@example.com',
+            'Test@1234'
+        )
+        recipe = models.Recipe.objects.create(
+            user=user,
+            title='Sample Recipe Name',
+            time_minutes=5,
+            price=Decimal('5.50'),
+            description="Same Test Description",
+        )
+
+        self.assertEqual(str(recipe), recipe.title)
