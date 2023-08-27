@@ -11,9 +11,14 @@ from rest_framework import status
 
 from decimal import Decimal
 from core.models import Recipe
-from recipe.serializers import RecipeSerializer
+from recipe.serializers import RecipeSerializer, RecipeDetailSerializer
 
 RECIPES_URL = reverse('recipe:recipe-list')
+
+
+def detail_url(recipe_id):
+    """Create and Return a Recipe Detail URL."""
+    return reverse('recipe:recipe-detail', args=[recipe_id, ])
 
 
 # **params -> If we pass value to it the recipe creation will use it else defaults will be used.
@@ -66,7 +71,7 @@ class PrivateRecipeAPITests(TestCase):
         serializer = RecipeSerializer(recipes, many=True)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertContains(res.data, serializer.data)
+        self.assertEqual(res.data, serializer.data)
 
     def test_recipe_list_limited_to_user(self):
         """Test list of recipes is limited to authenticated user."""
@@ -83,4 +88,15 @@ class PrivateRecipeAPITests(TestCase):
         serializer = RecipeSerializer(recipes, many=True)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertContains(res.data, serializer.data)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_get_recipe_detail(self):
+        """Test Get Recipe Detail."""
+        recipe = create_recipe(user=self.user)
+
+        # Get Recipe Detail URL
+        url = detail_url(recipe.id)
+        res = self.client.get(url)
+
+        serializer = RecipeDetailSerializer(recipe)
+        self.assertEqual(res.data, serializer.data)
